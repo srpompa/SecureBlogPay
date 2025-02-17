@@ -1,0 +1,21 @@
+<%- include('partials/header', { title: 'Crear Blog', user: user }) %>
+    <h2>Crear Blog</h2>
+    <form action="/blogs" method="POST" enctype="multipart/form-data">
+        <label for="title">Título:</label>
+        <input type="text" id="title" name="title" required>
+        
+        <label for="snippet">Resumen:</label>
+        <textarea id="snippet" name="snippet" required></textarea>
+        
+        <label for="body">Contenido:</label>
+        <textarea id="body" name="body" required></textarea>
+        
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" name="fecha" required>
+        
+        <label for="image">Imagen del Blog:</label>
+        <input type="file" id="image" name="image">
+        
+        <button type="submit">Crear Blog</button>
+    </form>
+<%- include('partials/footer') %>

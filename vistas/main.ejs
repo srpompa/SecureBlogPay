@@ -1,0 +1,21 @@
+<%- include('partials/header', { title: 'Inicio', user: user }) %>
+    <h2>Últimos Blogs</h2>
+    <% if (blogs.length > 0) { %>
+        <ul>
+            <% blogs.forEach(blog => { %>
+                <li>
+                    <h3><%= blog.title %></h3>
+                    <p><%= blog.snippet %></p>
+                    <p>Fecha: <%= blog.fecha ? blog.fecha.toLocaleDateString() : 'No especificada' %></p>
+                    <% if (blog.imagePath) { %>
+                        <img src="<%= blog.imagePath %>" alt="<%= blog.title %>" width="200">
+                    <% } %>
+                    <br>
+                    <a href="/blogs/<%= blog._id %>">Leer más</a>
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>No hay blogs disponibles.</p>
+    <% } %>
+<%- include('partials/footer') %>

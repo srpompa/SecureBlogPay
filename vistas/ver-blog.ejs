@@ -1,0 +1,16 @@
+<%- include('partials/header', { title: blog.title, user: user }) %>
+    <h2><%= blog.title %></h2>
+    <p><%= blog.snippet %></p>
+    <p><%= blog.body %></p>
+    <p>Fecha: <%= blog.fecha ? blog.fecha.toLocaleDateString() : 'No especificada' %></p>
+    <% if (blog.imagePath) { %>
+        <img src="<%= blog.imagePath %>" alt="<%= blog.title %>" width="400">
+    <% } %>
+    <p>Publicado el: <%= blog.createdAt.toLocaleDateString() %></p>
+    <% if (user) { %>
+        <a href="/blogs/editar/<%= blog._id %>">Editar</a>
+        <form action="/blogs/<%= blog._id %>?_method=DELETE" method="POST" style="display: inline;">
+            <button type="submit">Eliminar</button>
+        </form>
+    <% } %>
+<%- include('partials/footer') %>

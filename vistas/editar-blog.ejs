@@ -1,0 +1,28 @@
+<%- include('partials/header', { title: 'Editar Blog', user: user }) %>
+    <h2>Editar Blog</h2>
+    <form action="/blogs/editar/<%= blog._id %>" method="POST" enctype="multipart/form-data">
+        <label for="title">Título:</label>
+        <input type="text" id="title" name="title" value="<%= blog.title %>" required>
+        
+        <label for="snippet">Resumen:</label>
+        <textarea id="snippet" name="snippet" required><%= blog.snippet %></textarea>
+        
+        <label for="body">Contenido:</label>
+        <textarea id="body" name="body" required><%= blog.body %></textarea>
+        
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" name="fecha" value="<%= blog.fecha.toISOString().split('T')[0] %>" required>
+        
+        <label for="image">Nueva Imagen del Blog:</label>
+        <input type="file" id="image" name="image">
+        
+        <% if (blog.imagePath) { %>
+            <p>Imagen actual:</p>
+            <img src="<%= blog.imagePath %>" alt="<%= blog.title %>" width="200">
+        <% } %>
+
+        <br>
+        
+        <button type="submit">Actualizar Blog</button>
+    </form>
+<%- include('partials/footer') %>

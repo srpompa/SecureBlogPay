@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Proyecto Final</h1>
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="/productos">Productos</a>
+            <% if (user && user._id) { %>
+                <a href="/blogs/crear">Crear Blog</a>
+                <a href="/todos-los-usuarios">Usuarios</a>
+                <a href="/logout">Cerrar Sesión</a>
+            <% } else { %>
+                <a href="/login">Iniciar Sesión</a>
+                <a href="/sign-up">Registrarse</a>
+            <% } %>
+        </nav>
+    </header>

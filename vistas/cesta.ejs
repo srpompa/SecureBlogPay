@@ -1,0 +1,89 @@
+<%- include('partials/header', { title: 'Cesta', user: user }) %>
+    <h2>Tu Cesta</h2>
+    <% if (cesta.length > 0) { %>
+        <ul>
+            <% cesta.forEach(item => { %>
+                <li>
+                    <h3><%= item.nombre %></h3>
+                    <p>Precio: <%= item.precio %> €</p>
+                    <p>Cantidad: <%= item.cantidad %></p>
+                    <img src="<%= item.imagenUrl %>" alt="<%= item.nombre %>" width="100">
+                </li>
+            <% }) %>
+        </ul>
+        <p>Total: <%= cesta.reduce((total, item) => total + item.precio * item.cantidad, 0).toFixed(2) %> €</p>
+        
+        <div id="pagar-con-paypal"></div>
+        <div id="error-mensaje" style="color: red; display: none;"></div>
+    <% } else { %>
+        <p>Tu cesta está vacía.</p>
+    <% } %>
+    
+    <a href="/productos">Seguir comprando</a>
+
+    <!-- Script de PayPal con CLIENT_ID dinámico -->
+    <script src="https://www.paypal.com/sdk/js?client-id=<%= process.env.PAYPAL_CLIENT_ID %>&currency=EUR"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const errorMensaje = document.getElementById('error-mensaje');
+            
+            try {
+                const total = parseFloat('<%= cesta.reduce((total, item) => total + item.precio * item.cantidad, 0).toFixed(2) %>');
+                const items = JSON.parse('<%- JSON.stringify(cesta) %>');
+
+                const response = await fetch('/pagar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ total, items })
+                });
+
+                const responseData = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(responseData.message || 'Error al crear la orden de pago');
+                }
+
+                paypal.Buttons({
+                    createOrder: function() {
+                        return responseData.id;
+                    },
+                    onApprove: async function(data) {
+                        try {
+                            const captureResponse = await fetch(`/capturar-pago/${data.orderID}`, {
+                                method: 'POST'
+                            });
+                            
+                            const captureData = await captureResponse.json();
+                            
+                            if (!captureResponse.ok) {
+                                throw new Error(captureData.message || 'Error al capturar el pago');
+                            }
+
+                            alert('¡Pago completado con éxito!');
+                            // Limpiar la cesta después del pago exitoso
+                            await fetch('/limpiar-cesta', { method: 'POST' });
+                            window.location.href = '/';
+                        } catch (error) {
+                            console.error('Error en captura:', error);
+                            errorMensaje.textContent = `Error al procesar el pago: ${error.message}`;
+                            errorMensaje.style.display = 'block';
+                        }
+                    },
+                    onError: function(err) {
+                        console.error('Error en PayPal:', err);
+                        errorMensaje.textContent = 'Error en el proceso de PayPal. Por favor, intente nuevamente.';
+                        errorMensaje.style.display = 'block';
+                    }
+                }).render('#pagar-con-paypal');
+
+            } catch (error) {
+                console.error('Error detallado:', error);
+                errorMensaje.textContent = `Error al procesar el pago: ${error.message}`;
+                errorMensaje.style.display = 'block';
+            }
+        });
+    </script>
+<%- include('partials/footer') %>

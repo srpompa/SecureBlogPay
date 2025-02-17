@@ -1,0 +1,22 @@
+<%- include('partials/header', { title: 'Todos los Usuarios', user: user }) %>
+    <h2>Todos los Usuarios</h2>
+    <% if (users.length > 0) { %>
+        <ul>
+            <% users.forEach(user => { %>
+                <li>
+                    <h3><%= user.nombre %> <%= user.apellido %></h3>
+                    <p>Email: <%= user.email %></p>
+                    <p>Edad: <%= user.edad %></p>
+                    <p>Nacionalidad: <%= user.nacionalidad %></p>
+                    <p>Género: <%= user.sexo %></p>
+                    <p>Fecha de Nacimiento: <%= user.birthdate ? user.birthdate.toLocaleDateString() : 'No especificada' %></p>
+                    <% if (user.imagePath) { %>
+                        <img src="<%= user.imagePath %>" alt="<%= user.nombre %>" width="100">
+                    <% } %>
+                </li>
+            <% }) %>
+        </ul>
+    <% } else { %>
+        <p>No hay usuarios registrados.</p>
+    <% } %>
+<%- include('partials/footer') %>
